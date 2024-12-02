@@ -21,3 +21,16 @@ function readint(stream::IOStream)
     end
     return parse(Int, buff)
 end
+
+function readint(string::String)
+    i = 1
+    buff = string[i]
+    while isspace(buff)
+        i += 1
+        buff = string[i]
+    end
+    while !isspace(buff[end])
+        buff = buff * read(stream, Char)
+    end
+    return parse(Int, buff)
+end
