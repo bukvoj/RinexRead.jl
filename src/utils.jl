@@ -34,3 +34,13 @@ function readint(string::String)
     end
     return parse(Int, buff)
 end
+
+
+function parse_withwhitespace(string::String, type::Type)
+    for s in string
+        if !isspace(s)
+            return parse(type, string)
+        end
+    end
+    return NaN
+end

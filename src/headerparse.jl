@@ -80,43 +80,62 @@ function lineparse!(header::ObsHeader,::Type{Observer}, line::String)
 end
 
 function lineparse!(header::ObsHeader,::Type{RecNumberTypeVers}, line::String)
-    println("RecNumberTypeVers")
+    header.receiver = Receiver(line[1:20], line[21:40], line[41:60])
 end
 
 function lineparse!(header::ObsHeader,::Type{AntNumberType}, line::String)
-    println("AntNumberType")
+    header.antenna.number = line[1:20]
+    header.antenna.type = line[21:40]
 end
 
 function lineparse!(header::ObsHeader,::Type{ApproxPositionXYZ}, line::String)
-    println("ApproxPositionXYZ")
+    x = parse_withwhitespace(line[1:14], Float64)
+    y = parse_withwhitespace(line[15:28], Float64)
+    z = parse_withwhitespace(line[29:42], Float64)
+    header.antenna.xyz = [x, y, z]
 end
 
 function lineparse!(header::ObsHeader,::Type{AntennaDeltaHEN}, line::String)
-    println("AntennaDeltaHEN")
+    h = parse_withwhitespace(line[1:14], Float64)
+    e = parse_withwhitespace(line[15:28], Float64)
+    n = parse_withwhitespace(line[29:42], Float64)
+    header.antenna.delta_hen = [h,e,n]
 end
 
 function lineparse!(header::ObsHeader,::Type{AntennaDeltaXYZ}, line::String)
-    println("AntennaDeltaXYZ")
+    x = parse_withwhitespace(line[1:14], Float64)
+    y = parse_withwhitespace(line[15:28], Float64)
+    z = parse_withwhitespace(line[29:42], Float64)
+    header.antenna.delta_xyz = [x, y, z]
 end
 
 function lineparse!(header::ObsHeader,::Type{AntennaPhaseCenter}, line::String)
-    println("AntennaPhaseCenter")
+    println("AntennaPhaseCenter parsing not implemented. WIP") # TODO
 end
 
 function lineparse!(header::ObsHeader,::Type{AntennaBsight}, line::String)
-    println("AntennaBsight")
+    x = parse_withwhitespace(line[1:14], Float64)
+    y = parse_withwhitespace(line[15:28], Float64)
+    z = parse_withwhitespace(line[29:42], Float64)
+    header.antenna.bsight = [x, y, z]
 end
 
 function lineparse!(header::ObsHeader,::Type{AntennaZerodirXYZ}, line::String)
-    println("AntennaZerodirXYZ")
+    x = parse_withwhitespace(line[1:14], Float64)
+    y = parse_withwhitespace(line[15:28], Float64)
+    z = parse_withwhitespace(line[29:42], Float64)
+    header.antenna.zerodir_xyz = [x, y, z]
 end
 
 function lineparse!(header::ObsHeader,::Type{AntennaZerodirAzi}, line::String)
-    println("AntennaZerodirAzi")
+    header.antenna.zerodir_azi = parse_withwhitespace(line[1:14], Float64)
 end
 
 function lineparse!(header::ObsHeader,::Type{AntennaCenterOfMass}, line::String)
-    println("AntennaCenterOfMass")
+    x = parse_withwhitespace(line[1:14], Float64)
+    y = parse_withwhitespace(line[15:28], Float64)
+    z = parse_withwhitespace(line[29:42], Float64)
+    header.antenna.center_of_mass = [x, y, z]
 end
 
 function lineparse!(header::ObsHeader,::Type{SystemObsType}, line::String)

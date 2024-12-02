@@ -10,7 +10,7 @@ Marker() = Marker("", "", "")
 struct Receiver
     number::String
     type::String
-    firmware::String
+    verion::String
 end
 Receiver() = Receiver("", "", "")
 
@@ -18,16 +18,16 @@ mutable struct Antenna
     number::String
     type::String
     version::String
-    xyz::Vector{Float64}
-    delta_xyz::Vector{Float64}
-    delta_hen::Vector{Float64}
-    phase_center::Vector{Float64}
-    bsight::Vector{Float64}
-    zerodir_xyz::Vector{Float64}
-    zerodir_azi::Vector{Float64}
-    center_of_mass::Vector{Float64}
+    xyz::Vector{Real}
+    delta_xyz::Vector{Real}
+    delta_hen::Vector{Real} # height, east/north eccentricity
+    phase_center::Vector{Real}
+    bsight::Vector{Real}
+    zerodir_xyz::Vector{Real}
+    zerodir_azi::Real
+    center_of_mass::Vector{Real}
 end
-Antenna() = Antenna("", "", "",[[NaN,NaN,NaN] for i in 1:8]...)
+Antenna() = Antenna("", "", "",[[NaN,NaN,NaN] for i in 1:6]...,NaN,[NaN,NaN,NaN])
 
 struct SystemObs
     constellation::Char
