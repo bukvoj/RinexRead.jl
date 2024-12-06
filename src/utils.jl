@@ -37,10 +37,15 @@ end
 
 
 function parse_withwhitespace(string::String, type::Type)
-    for s in string
-        if !isspace(s)
-            return parse(type, string)
-        end
+    if length(strip(string)) == 0
+        return NaN
+    end
+    return parse(type, string)
+end
+
+function parse_withwhitespace(s::Char, type::Type)
+    if !isspace(s)
+        return parse(type, string(s))
     end
     return NaN
 end

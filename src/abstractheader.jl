@@ -21,13 +21,13 @@ mutable struct Antenna
     xyz::Vector{Real}
     delta_xyz::Vector{Real}
     delta_hen::Vector{Real} # height, east/north eccentricity
-    phase_center::Vector{Real}
     bsight::Vector{Real}
     zerodir_xyz::Vector{Real}
+    phase_center::DataFrames.DataFrame
     zerodir_azi::Real
     center_of_mass::Vector{Real}
 end
-Antenna() = Antenna("", "", "",[[NaN,NaN,NaN] for i in 1:6]...,NaN,[NaN,NaN,NaN])
+Antenna() = Antenna("", "", "",[[NaN,NaN,NaN] for i in 1:5]...,DataFrame(),NaN,[NaN,NaN,NaN])
 
 struct SystemObs
     constellation::Char
@@ -80,10 +80,10 @@ struct LeapSeconds
     future_leap_seconds::Int
     week_number::Int
     day_of_week::Int
-    time_system_id::String
+    time_system_id::Char
 end
-LeapSeconds() = LeapSeconds(0, 0, 0, 0, "GPS")
-LeapSeconds(ls::Int) = LeapSeconds(ls, ls, 0, 0, "GPS")
+LeapSeconds() = LeapSeconds(0, 0, 0, 0, 'G')
+LeapSeconds(ls::Int) = LeapSeconds(ls, ls, 0, 0, 'G')
 
 mutable struct ObsHeader <: RinexHeader
     version::Number

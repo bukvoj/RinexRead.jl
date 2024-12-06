@@ -110,7 +110,13 @@ function lineparse!(header::ObsHeader,::Type{AntennaDeltaXYZ}, line::String)
 end
 
 function lineparse!(header::ObsHeader,::Type{AntennaPhaseCenter}, line::String)
-    println("AntennaPhaseCenter parsing not implemented. WIP") # TODO
+    constellation = line[1]
+    obs_code = line[3:5]
+    x = parse_withwhitespace(line[6:15], Float64)   #kinda sus but in table ....  
+    y = parse_withwhitespace(line[16:29], Float64)  # TABLE A2 GNSS OBSERVATION DATA FILE - HEADER SECTION DESCRIPTION    
+    z = parse_withwhitespace(line[30:43], Float64)  #https://files.igs.org/pub/data/format/rinex303.pdf
+    phase_center = DataFrame(constellation=constellation, obs_code=obs_code, x=x, y=y, z=z)
+    vcat!(header.antenna.phase_center, phase_center)
 end
 
 function lineparse!(header::ObsHeader,::Type{AntennaBsight}, line::String)
@@ -139,39 +145,73 @@ function lineparse!(header::ObsHeader,::Type{AntennaCenterOfMass}, line::String)
 end
 
 function lineparse!(header::ObsHeader,::Type{SystemObsType}, line::String)
-    println("SystemObsType")
+    constellation = line[1]
+    number_of_observables = parse(Int, line[2:6])
+    types = [line[8+i*4:10+i*4] for i in 0:number_of_observables-1]
+    sysobstypes = SystemObs(constellation, number_of_observables, types)
+    header.systems[constellation] = sysobstypes
 end
 
 function lineparse!(header::ObsHeader,::Type{SignalStrengthUnit}, line::String)
-    println("SignalStrengthUnit")
+    header.optional["signal_strength_unit"] = line[1:20]
 end
 
 function lineparse!(header::ObsHeader,::Type{Interval}, line::String)
-    println("Interval")
+    header.optional["interval"] = parse_withwhitespace(line[1:10], Float64)
 end
 
 function lineparse!(header::ObsHeader,::Type{TimeOfFirstObs}, line::String)
-    println("TimeOfFirstObs")
+    year = parse(Int, line[1:6])
+    month = parse(Int, line[7:12])
+    day = parse(Int, line[13:18])
+    hour = parse(Int, line[19:24])
+    minute = parse(Int, line[25:30])
+    second = parse(Float64, line[31:43])
+    millisecond = floor(1000 * (second - floor(second)))
+    second = floor(second)
+    header.time_of_first_obs = DateTime(year, month, day, hour, minute, second, millisecond)
 end
 
 function lineparse!(header::ObsHeader,::Type{TimeOfLastObs}, line::String)
-    println("TimeOfLastObs")
+    year = parse(Int, line[1:6])
+    month = parse(Int, line[7:12])
+    day = parse(Int, line[13:18])
+    hour = parse(Int, line[19:24])
+    minute = parse(Int, line[25:30])
+    second = parse(Float64, line[31:43])
+    millisecond = floor(1000 * (second - floor(second)))
+    second = floor(second)
+    header.optional["time_of_last_obs"] = DateTime(year, month, day, hour, minute, second, millisecond)
 end
 
 function lineparse!(header::ObsHeader,::Type{RcvClockOffsAppl}, line::String)
-    println("RcvClockOffsAppl")
+    header.optional["rcv_clock_offs_appl"] = occursin("1", line[1:6])
 end
 
 function lineparse!(header::ObsHeader,::Type{SysDcbsApplied}, line::String)
-    println("SysDcbsApplied")
+    constellation = line[1]
+    program = line[2:20]
+    url = line[21:60]
+    if haskey(header.optional, "sys_dcbs_applied")
+        push!(header.optional["sys_dcbs_applied"], Corrections(constellation, program, url))
+    else
+        header.optional["sys_dcbs_applied"] = [Corrections(constellation, program, url)]
+    end
 end
 
 function lineparse!(header::ObsHeader,::Type{SysPcvsApplied}, line::String)
-    println("SysPcvsApplied")
+    constellation = line[1]
+    program = line[2:20]
+    url = line[21:60]
+    if haskey(header.optional, "sys_pcvs_applied")
+        push!(header.optional["sys_pcvs_applied"], Corrections(constellation, program, url))
+    else
+        header.optional["sys_pcvs_applied"] = [Corrections(constellation, program, url)]
+    end
 end
 
 function lineparse!(header::ObsHeader,::Type{SysScaleFactor}, line::String)
-    println("SysScaleFactor")
+    println("SysScaleFactor not IMPLEMENTED") # TODO TODO TODO
 end
 
 function lineparse!(header::ObsHeader,::Type{SysPhaseShift}, line::String)
@@ -187,11 +227,21 @@ function lineparse!(header::ObsHeader,::Type{GlonassCodPhsBis}, line::String)
 end
 
 function lineparse!(header::ObsHeader,::Type{LeapSeconds}, line::String)
-    println("LeapSeconds")
+    current = parse_withwhitespace(line[1:6], Int)
+    future = parse_withwhitespace(line[7:12], Int)
+    week_number = parse_withwhitespace(line[13:18], Int)
+    day_of_week = parse_withwhitespace(line[19:24], Int)
+    time_system_id = line[25:27]
+    if time_system_id == "BDS"
+        constellation = 'C'
+    else
+        constellation = 'G'
+    end
+    header.optional["leap_seconds"] = LeapSeconds(current, future, week_number, day_of_week, constellation)
 end
 
 function lineparse!(header::ObsHeader,::Type{NumSatellites}, line::String)
-    println("NumSatellites")
+    header.optional["num_satellites"] = parse(Int, line[1:6])
 end
 
 function lineparse!(header::ObsHeader,::Type{PrnObsTypes}, line::String)
@@ -199,7 +249,7 @@ function lineparse!(header::ObsHeader,::Type{PrnObsTypes}, line::String)
 end
 
 function lineparse!(header::ObsHeader,::Type{EndOfHeader}, line::String)
-    println("EndOfHeader")
+    nothing
 end
 
 function lineparse!(header::ObsHeader,::Type{<:HeaderLabels}, line::String)
