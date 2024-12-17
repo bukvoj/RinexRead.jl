@@ -49,16 +49,8 @@ function parsebody!(stream::IOStream, header::ObsHeader)
         if l == 0
             continue
         end
-        if l[1] == '>'
-            year = parse_withwhitespace(line[1:5], Int)
-            month = parse_withwhitespace(line[6:8], Int)
-            day = parse_withwhitespace(line[9:11], Int)
-            hour = parse_withwhitespace(line[12:14], Int)
-            minute = parse_withwhitespace(line[15:17], Int)
-            second = parse_withwhitespace(line[18:29], Float64)
-            millisecond = floor(1000 * (second - floor(second)))
-            second = floor(second)
-            time = DateTime(year, month, day, hour, minute, second, millisecond)
+        if line[1] == '>'
+            time = DateTime(line[3:29], "yyyy mm dd HH MM SS.sssssss")
             flag = parse(Int, line[30:32])
             if flag != 0
                 println("WARNING: Epoch flag is not 0\n special events not supported yet\nthe parsing will most likely fail or give incorrect results!")
