@@ -32,6 +32,11 @@ module RinexRead
         return RinexContent(header, body)
     end
 
+    Base.iterate(content::RinexContent, state=1) = 
+        state == 1 ? (content.header, 2) : 
+        state == 2 ? (content.data, nothing) : 
+        nothing
+
 export rinexread,
     RinexContent,
     RinexHeader,

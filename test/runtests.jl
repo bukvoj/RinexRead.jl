@@ -1,8 +1,6 @@
 using RinexRead
 using Test
 
-@testset "RinexRead.jl" begin
 
+include("navbody.jl")
 
-    
-end
