@@ -211,14 +211,50 @@ function lineparse!(header::ObsHeader,::Type{SysPcvsApplied}, line::String)
 end
 
 function lineparse!(header::ObsHeader,::Type{SysScaleFactor}, line::String)
-    println("SysScaleFactor not IMPLEMENTED") # TODO TODO TODO
+    constellation = line[1]
+    factor = parse_withwhitespace(line[3:6], Int)
+    factor = isnan(factor) ? 1 : factor
+    number_of_types = parse_withwhitespace(line[9:11], Int)
+    number_of_types = isnan(number_of_types) ? header.system[constellation].number_of_observables : number_of_types
+    if number_of_types > 12
+        println("DANGER: TOO MANY OBSERVABLES IN SCALE FACTOR, CONTINUATION LINE NOT IMPLEMENTED")
+        return
+    end    
+    types = [line[13+i*4:15+i*4] for i in 0:number_of_types-1]
+    if haskey(header.optional, "sys_scale_factor")
+        for t in types
+            header.optional["sys_scale_factor"][(constellation,t)] = factor
+        end
+    else
+        header.optional["sys_scale_factor"] = Dict{Tuple, Real}()
+        for t in types
+            header.optional["sys_scale_factor"][(constellation,t)] = factor
+        end
+    end
 end
 
 function lineparse!(header::ObsHeader,::Type{SysPhaseShift}, line::String)
-    println("SysPhaseShift")
+    constellation = line[1]
+    obs_code = line[3:5]
+    correction_applied = parse_withwhitespace(line[7:14], Float64)
+    correction_applied = isnan(correction_applied) ? 0 : correction_applied
+    number_of_sats = parse_withwhitespace(line[15:19], Int)
+    number_of_sats = isnan(number_of_sats) ? 0 : number_of_sats # 0 means all
+    if number_of_sats > 10
+        println("DANGER: TOO MANY SATELLITES IN PHASE SHIFT, CONTINUATION LINE NOT IMPLEMENTED")
+        return
+    end
+    if number_of_sats == 0
+        list_of_sats = 0
+    else
+        list_of_sats = [parse(Int, line[21+i*4:22+i*4]) for i in 0:number_of_sats-1]
+    end
+    for sv in list_of_sats
+        header.sys_phase_shift[(constellation, obs_code, sv)] = correction_applied
+    end
 end
 
-function lineparse!(header::ObsHeader,::Type{GlonassSlotFrqNum}, line::String)
+function lineparse!(header::ObsHeader,::Type{GlonassSlots}, line::String)
     println("GlonassSlotFrqNum")
 end
 
@@ -253,6 +289,6 @@ function lineparse!(header::ObsHeader,::Type{EndOfHeader}, line::String)
 end
 
 function lineparse!(header::ObsHeader,::Type{<:HeaderLabels}, line::String)
-    println("Unknown Header Label")
+    println("WARNING: Unknown Header Label encountered")
 end
 

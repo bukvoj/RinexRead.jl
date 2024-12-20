@@ -28,6 +28,7 @@ E L7X  0.00000                                              SYS / PHASE SHIFT
 S L1C                                                       SYS / PHASE SHIFT   
 C L1I                                                       SYS / PHASE SHIFT   
 C L7I                                                       SYS / PHASE SHIFT   
+G L2S -0.25000  03 G15 G16 G17                              SYS / PHASE SHIFT
  11 R02 -4 R03  5 R04  6 R09 -2 R10 -7 R11  0 R16 -1 R17  4 GLONASS SLOT / FRQ #
     R18 -3 R19  3 R20  2                                    GLONASS SLOT / FRQ #
  C1C    0.000 C1P    0.000 C2C    0.000 C2P    0.000        GLONASS COD/PHS/BIS 

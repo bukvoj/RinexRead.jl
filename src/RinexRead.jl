@@ -6,8 +6,8 @@ module RinexRead
     include("utils.jl")
 
     # Abstract types and structs
-    include("abstractheader.jl")
     include("headerlabels.jl")
+    include("abstractheader.jl")
     include("abstractbody.jl")
 
     # Header parsing
