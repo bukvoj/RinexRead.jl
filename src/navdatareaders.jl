@@ -8,7 +8,7 @@ function readgpsnavdata!(stream::IOStream)
     minute = readint(stream)
     second = readint(stream)
 
-    time = DateTime(year, month, day, hour, minute, second)
+    time = TimeDate(year, month, day, hour, minute, second)
 
     # Read the data
     clk_bias = readfloat(stream)
@@ -95,7 +95,7 @@ function readgalileonavdata!(stream::IOStream)
     minute = readint(stream)
     second = readint(stream)
 
-    time = DateTime(year, month, day, hour, minute, second)
+    time = TimeDate(year, month, day, hour, minute, second)
 
     # Read the data
     clk_bias = readfloat(stream)
@@ -179,7 +179,7 @@ function readglonassnavdata!(stream::IOStream)
     minute = readint(stream)
     second = readint(stream)
 
-    time = DateTime(year, month, day, hour, minute, second)
+    time = TimeDate(year, month, day, hour, minute, second)
 
     # Read the data
     clk_bias = readfloat(stream)
@@ -232,7 +232,7 @@ function readqzssnavdata!(stream::IOStream)
     minute = readint(stream)
     second = readint(stream)
 
-    time = DateTime(year, month, day, hour, minute, second)
+    time = TimeDate(year, month, day, hour, minute, second)
 
     # Read the data
     clk_bias = readfloat(stream)
@@ -317,7 +317,7 @@ function readbeidounavdata!(stream::IOStream)
     minute = readint(stream)
     second = readint(stream)
 
-    time = DateTime(year, month, day, hour, minute, second)
+    time = TimeDate(year, month, day, hour, minute, second)
 
     # Read the data
     clk_bias = readfloat(stream)
@@ -400,7 +400,7 @@ function readsbasnavdata!(stream::IOStream)
     minute = readint(stream)
     second = readint(stream)
 
-    time = DateTime(year, month, day, hour, minute, second)
+    time = TimeDate(year, month, day, hour, minute, second)
 
     # Read the data
     clk_bias = readfloat(stream)
@@ -453,7 +453,7 @@ function readirnssnavdata!(stream::IOStream)
     minute = readint(stream)
     second = readint(stream)
 
-    time = DateTime(year, month, day, hour, minute, second)
+    time = TimeDate(year, month, day, hour, minute, second)
 
     # Read the data
     clk_bias = readfloat(stream)

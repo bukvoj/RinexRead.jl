@@ -1,6 +1,6 @@
 module RinexRead
     using DataFrames
-    using Dates
+    using TimesDates # TimeDate is like DateTime but with nanosecond precision
 
     # Utility functions
     include("utils.jl")

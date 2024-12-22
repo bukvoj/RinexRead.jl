@@ -49,3 +49,19 @@ function parse_withwhitespace(s::Char, type::Type)
     end
     return NaN
 end
+
+
+
+function str2TimeDate(string::String, format::String)
+    year = parse(Int, join([string[id] for id in findall("y", format)]))
+    month = parse(Int, join([string[id] for id in findall("m", format)]))
+    day = parse(Int, join([string[id] for id in findall("d", format)]))
+    hour = parse(Int, join([string[id] for id in findall("H", format)]))
+    minute = parse(Int, join([string[id] for id in findall("M", format)]))
+    second = parse(Int, join([string[id] for id in findall("S", format)]))
+    fracsec = parse(Float64, join(["0.",join([string[id] for id in findall("s", format)])]))
+    millisecond = Int(floor(fracsec*1000))
+    microsecond = Int(floor(fracsec*1000000) - millisecond*1000)
+    nanosecond = Int(floor(fracsec*1000000000) - millisecond*1000000 - microsecond*1000)
+    return TimeDate(year, month, day, hour, minute, second, millisecond, microsecond, nanosecond)
+end

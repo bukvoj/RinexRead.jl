@@ -28,17 +28,13 @@ abstract type SysDcbsApplied <: HeaderLabels end
 abstract type SysPcvsApplied <: HeaderLabels end
 abstract type SysPhaseShift <: HeaderLabels end
 abstract type SysScaleFactor <: HeaderLabels end
-
+abstract type GlonassSlots <: HeaderLabels end
 abstract type NumSatellites <: HeaderLabels end
 abstract type PrnObsTypes <: HeaderLabels end
 abstract type EndOfHeader <: HeaderLabels end
 
-struct GlonassSlots
-    number_of_satellites::Int
-    satellite_numbers::Vector{Int}
-    frequency_numbers::Vector{Int}
-end
-GlonassSlots() = GlonassSlots(0, [], [])
+
+
 
 struct GlonassCodPhsBis
     C1C::Real

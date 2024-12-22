@@ -1,5 +1,3 @@
-
-
 function readheader(stream::IOStream)
     str = readuntil(stream, "END OF HEADER"; keep=true) * readuntil(stream, '\n')
     if occursin("RINEX VERSION / TYPE", str[61:end])
@@ -47,7 +45,7 @@ end
 function lineparse!(header::ObsHeader,::Type{PgmRunbyDate}, line::String)
     header.pgm = line[1:20]
     header.runby = line[21:40]
-    header.date = DateTime(parse(Int, line[41:44]), 
+    header.date = TimeDate(parse(Int, line[41:44]), 
                             parse(Int, line[45:46]), 
                             parse(Int, line[47:48]),
                             parse(Int, line[50:51]),
@@ -161,27 +159,11 @@ function lineparse!(header::ObsHeader,::Type{Interval}, line::String)
 end
 
 function lineparse!(header::ObsHeader,::Type{TimeOfFirstObs}, line::String)
-    year = parse(Int, line[1:6])
-    month = parse(Int, line[7:12])
-    day = parse(Int, line[13:18])
-    hour = parse(Int, line[19:24])
-    minute = parse(Int, line[25:30])
-    second = parse(Float64, line[31:43])
-    millisecond = floor(1000 * (second - floor(second)))
-    second = floor(second)
-    header.time_of_first_obs = DateTime(year, month, day, hour, minute, second, millisecond)
+    header.time_of_first_obs = str2TimeDate(line[1:43], "  yyyy    mm    dd    HH    MM   SS.sssssss")
 end
 
 function lineparse!(header::ObsHeader,::Type{TimeOfLastObs}, line::String)
-    year = parse(Int, line[1:6])
-    month = parse(Int, line[7:12])
-    day = parse(Int, line[13:18])
-    hour = parse(Int, line[19:24])
-    minute = parse(Int, line[25:30])
-    second = parse(Float64, line[31:43])
-    millisecond = floor(1000 * (second - floor(second)))
-    second = floor(second)
-    header.optional["time_of_last_obs"] = DateTime(year, month, day, hour, minute, second, millisecond)
+    header.optional["TIME OF LAST OBS"] = str2TimeDate(line[1:43], "  yyyy    mm    dd    HH    MM   SS.sssssss")
 end
 
 function lineparse!(header::ObsHeader,::Type{RcvClockOffsAppl}, line::String)
@@ -255,11 +237,21 @@ function lineparse!(header::ObsHeader,::Type{SysPhaseShift}, line::String)
 end
 
 function lineparse!(header::ObsHeader,::Type{GlonassSlots}, line::String)
-    println("GlonassSlotFrqNum")
+    for i in 0:7
+        slot = parse_withwhitespace(line[6+i*7:7+i*7], Int)
+        freq = parse_withwhitespace(line[9+i*7:10+i*7], Int)
+        if !isnan(slot)
+            header.glonass_slot_frq[slot] = freq
+        end
+    end
 end
 
 function lineparse!(header::ObsHeader,::Type{GlonassCodPhsBis}, line::String)
-    println("GlonassCodPhsBis")
+    c1c = parse_withwhitespace(line[6:13], Float64)
+    c1p = parse_withwhitespace(line[19:26], Float64)
+    c2c = parse_withwhitespace(line[32:39], Float64)
+    c2p = parse_withwhitespace(line[45:52], Float64)
+    header.glonass_cod_phs_bis = GlonassCodPhsBis(c1c, c1p, c2c, c2p)
 end
 
 function lineparse!(header::ObsHeader,::Type{LeapSeconds}, line::String)
@@ -281,7 +273,7 @@ function lineparse!(header::ObsHeader,::Type{NumSatellites}, line::String)
 end
 
 function lineparse!(header::ObsHeader,::Type{PrnObsTypes}, line::String)
-    println("PrnObsTypes")
+    println("Warning: PRN / # OF OBS parsing not supported, skipping line")
 end
 
 function lineparse!(header::ObsHeader,::Type{EndOfHeader}, line::String)

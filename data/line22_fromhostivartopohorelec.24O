@@ -17,8 +17,8 @@ R    6 C1C L1C D1C C2C L2C D2C                              SYS / # / OBS TYPES
 E    6 C1X L1X D1X C7X L7X D7X                              SYS / # / OBS TYPES 
 S    3 C1C L1C D1C                                          SYS / # / OBS TYPES 
 C    6 C1I L1I D1I C7I L7I D7I                              SYS / # / OBS TYPES 
-  2024    07    10    07    31   17.0020000     GPS         TIME OF FIRST OBS   
-  2024    07    10    08    14   38.0040000     GPS         TIME OF LAST OBS    
+  2024    07    10    07    31   17.0024269     GPS         TIME OF FIRST OBS   
+  2024    07    10    08    14   38.0040005     GPS         TIME OF LAST OBS    
 G L1C                                                       SYS / PHASE SHIFT   
 G L2X  0.00000                                              SYS / PHASE SHIFT   
 R L1C                                                       SYS / PHASE SHIFT   
@@ -31,9 +31,9 @@ C L7I                                                       SYS / PHASE SHIFT
 G L2S -0.25000  03 G15 G16 G17                              SYS / PHASE SHIFT
  11 R02 -4 R03  5 R04  6 R09 -2 R10 -7 R11  0 R16 -1 R17  4 GLONASS SLOT / FRQ #
     R18 -3 R19  3 R20  2                                    GLONASS SLOT / FRQ #
- C1C    0.000 C1P    0.000 C2C    0.000 C2P    0.000        GLONASS COD/PHS/BIS 
+ C1C 8765.321 C1P 1234.678 C2C 1234.678 C2P 1234.678        GLONASS COD/PHS/BIS 
                                                             END OF HEADER       
-> 2024 07 10 07 31 17.0020000  0 28                     
+> 2024 07 10 07 31 17.0024242  0 28                     
 S36  39106143.064 8               9      -913.916  
 G15  24464787.428 4 128563330.19335      -371.442                                                  
 G16  21574200.495 1 113373190.16012     -2261.792                                                  
