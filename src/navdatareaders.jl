@@ -144,7 +144,7 @@ function readgalileonavdata!(stream::IOStream)
         SVClockDriftRate = clk_drift_rate,
         IODnav = iode,
         Crs = crs,
-        delta_n = delta_n,
+        Delta_n = delta_n,
         M0 = m0,
         Cuc = cuc,
         Eccentricity = e,
