@@ -151,33 +151,33 @@ function lineparse!(header::ObsHeader,::Type{SystemObsType}, line::String)
 end
 
 function lineparse!(header::ObsHeader,::Type{SignalStrengthUnit}, line::String)
-    header.optional["signal_strength_unit"] = line[1:20]
+    header.optional["SIGNAL STRENGTH UNIT"] = line[1:20]
 end
 
 function lineparse!(header::ObsHeader,::Type{Interval}, line::String)
-    header.optional["interval"] = parse_withwhitespace(line[1:10], Float64)
+    header.optional["INTERVAL"] = parse_withwhitespace(line[1:10], Float64)
 end
 
 function lineparse!(header::ObsHeader,::Type{TimeOfFirstObs}, line::String)
-    header.time_of_first_obs = str2TimeDate(line[1:43], "  yyyy    mm    dd    HH    MM   SS.sssssss")
+    header.time_of_first_obs = TimeDate(line[1:43], "  yyyy    mm    dd    HH    MM   SS.sssssss")
 end
 
 function lineparse!(header::ObsHeader,::Type{TimeOfLastObs}, line::String)
-    header.optional["TIME OF LAST OBS"] = str2TimeDate(line[1:43], "  yyyy    mm    dd    HH    MM   SS.sssssss")
+    header.optional["TIME OF LAST OBS"] = TimeDate(line[1:43], "  yyyy    mm    dd    HH    MM   SS.sssssss")
 end
 
 function lineparse!(header::ObsHeader,::Type{RcvClockOffsAppl}, line::String)
-    header.optional["rcv_clock_offs_appl"] = occursin("1", line[1:6])
+    header.optional["RCV CLOCK OFFS APPL"] = occursin("1", line[1:6])
 end
 
 function lineparse!(header::ObsHeader,::Type{SysDcbsApplied}, line::String)
     constellation = line[1]
     program = line[2:20]
     url = line[21:60]
-    if haskey(header.optional, "sys_dcbs_applied")
-        push!(header.optional["sys_dcbs_applied"], Corrections(constellation, program, url))
+    if haskey(header.optional, "SYS / DCBS APPLIED")
+        push!(header.optional["SYS / DCBS APPLIED"], Corrections(constellation, program, url))
     else
-        header.optional["sys_dcbs_applied"] = [Corrections(constellation, program, url)]
+        header.optional["SYS / DCBS APPLIED"] = [Corrections(constellation, program, url)]
     end
 end
 
@@ -185,10 +185,10 @@ function lineparse!(header::ObsHeader,::Type{SysPcvsApplied}, line::String)
     constellation = line[1]
     program = line[2:20]
     url = line[21:60]
-    if haskey(header.optional, "sys_pcvs_applied")
-        push!(header.optional["sys_pcvs_applied"], Corrections(constellation, program, url))
+    if haskey(header.optional, "SYS / PCVS APPLIED")
+        push!(header.optional["SYS / PCVS APPLIED"], Corrections(constellation, program, url))
     else
-        header.optional["sys_pcvs_applied"] = [Corrections(constellation, program, url)]
+        header.optional["SYS / PCVS APPLIED"] = [Corrections(constellation, program, url)]
     end
 end
 
@@ -203,14 +203,14 @@ function lineparse!(header::ObsHeader,::Type{SysScaleFactor}, line::String)
         return
     end    
     types = [line[13+i*4:15+i*4] for i in 0:number_of_types-1]
-    if haskey(header.optional, "sys_scale_factor")
+    if haskey(header.optional, "SYS / SCALE FACTOR")
         for t in types
-            header.optional["sys_scale_factor"][(constellation,t)] = factor
+            header.optional["SYS / SCALE FACTOR"][(constellation,t)] = factor
         end
     else
-        header.optional["sys_scale_factor"] = Dict{Tuple, Real}()
+        header.optional["SYS / SCALE FACTOR"] = Dict{Tuple, Real}()
         for t in types
-            header.optional["sys_scale_factor"][(constellation,t)] = factor
+            header.optional["SYS / SCALE FACTOR"][(constellation,t)] = factor
         end
     end
 end
@@ -265,11 +265,11 @@ function lineparse!(header::ObsHeader,::Type{LeapSeconds}, line::String)
     else
         constellation = 'G'
     end
-    header.optional["leap_seconds"] = LeapSeconds(current, future, week_number, day_of_week, constellation)
+    header.optional["LEAP SECONDS"] = LeapSeconds(current, future, week_number, day_of_week, constellation)
 end
 
 function lineparse!(header::ObsHeader,::Type{NumSatellites}, line::String)
-    header.optional["num_satellites"] = parse(Int, line[1:6])
+    header.optional["# OF SATELLITES"] = parse(Int, line[1:6])
 end
 
 function lineparse!(header::ObsHeader,::Type{PrnObsTypes}, line::String)

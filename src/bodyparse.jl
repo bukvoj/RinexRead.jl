@@ -35,12 +35,12 @@ function parsebody!(stream::IOStream, header::ObsHeader)
     d = Dict()
     for key in keys(header.systems)
         d[key] = Dict(
-            "time" => TimeDate[],
-            "id" => Int[],
-            "epoch_flag" => Int[],
+            "Time" => TimeDate[],
+            "SatelliteID" => Int[],
+            "EpochFlag" => Int[],
             [name => Float64[] for name in header.systems[key].types]...,
             [name*"_LLI" => Float64[] for name in header.systems[key].types]...,
-            [name*"_signal_strength" => Float64[] for name in header.systems[key].types]...
+            [name*"_SSI" => Float64[] for name in header.systems[key].types]...
         )
     end
     
@@ -50,7 +50,7 @@ function parsebody!(stream::IOStream, header::ObsHeader)
             continue
         end
         if line[1] == '>'
-            time = str2TimeDate(line[3:29], "yyyy mm dd HH MM SS.sssssss")
+            time = TimeDate(line[3:29], "yyyy mm dd HH MM SS.sssssss")
             flag = parse(Int, line[30:32])
             if flag != 0
                 println("WARNING: Epoch flag is not 0\n special events not supported yet\nthe parsing will most likely fail or give incorrect results!")
@@ -77,11 +77,11 @@ function parsebody!(stream::IOStream, header::ObsHeader)
                 end
                 push!(d[line[1]][names[i]], value)
                 push!(d[line[1]][names[i]*"_LLI"], lli)
-                push!(d[line[1]][names[i]*"_signal_strength"], signal)
+                push!(d[line[1]][names[i]*"_SSI"], signal)
             end
-            push!(d[line[1]]["time"], time)
-            push!(d[line[1]]["id"], id)
-            push!(d[line[1]]["epoch_flag"], flag)
+            push!(d[line[1]]["Time"], time)
+            push!(d[line[1]]["SatelliteID"], id)
+            push!(d[line[1]]["EpochFlag"], flag)
         end
     end
     data = RinexBody()

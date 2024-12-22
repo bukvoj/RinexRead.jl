@@ -52,7 +52,7 @@ end
 
 
 
-function str2TimeDate(string::String, format::String)
+function TimesDates.TimeDate(string::String, format::String)
     year = parse(Int, join([string[id] for id in findall("y", format)]))
     month = parse(Int, join([string[id] for id in findall("m", format)]))
     day = parse(Int, join([string[id] for id in findall("d", format)]))

@@ -1,5 +1,5 @@
 @testset "nav body parsing" begin
-    path = "..\\data\\line22_fromhostivartopohorelec.24O"
+    path = "../data/line22_fromhostivartopohorelec.24O"
     content = rinexread(path)
     header,data = rinexread(path)
 
