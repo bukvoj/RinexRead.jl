@@ -31,33 +31,9 @@ abstract type SysScaleFactor <: HeaderLabels end
 abstract type GlonassSlots <: HeaderLabels end
 abstract type NumSatellites <: HeaderLabels end
 abstract type PrnObsTypes <: HeaderLabels end
+# abstract type IonosphericCorrections <: HeaderLabels end # THESE ARE IN ionosphericcorrections.jl
+# abstract type TimeSystemCorrections <: HeaderLabels end  # THESE ARE IN timesystemcorrectionscorrections.jl
 abstract type EndOfHeader <: HeaderLabels end
-
-
-
-
-struct GlonassCodPhsBis
-    C1C::Real
-    C1P::Real
-    C2C::Real
-    C2P::Real
-end
-GlonassCodPhsBis() = GlonassCodPhsBis(0.0, 0.0, 0.0, 0.0)
-
-struct LeapSeconds
-    current_leap_seconds::Int
-    future_leap_seconds::Int
-    week_number::Int
-    day_of_week::Int
-    time_system_id::Char
-end
-LeapSeconds() = LeapSeconds(0, 0, 0, 0, 'G')
-LeapSeconds(ls::Int) = LeapSeconds(ls, ls, 0, 0, 'G')
-
-
-
-
-
 
 const HEADER_LABELS = Dict("RINEX VERSION / TYPE" => RinexVersionType,
                      "PGM / RUN BY / DATE" => PgmRunbyDate,
@@ -91,50 +67,10 @@ const HEADER_LABELS = Dict("RINEX VERSION / TYPE" => RinexVersionType,
                      "LEAP SECONDS" => LeapSeconds,
                     "# OF SATELLITES" => NumSatellites,
                     "PRN / # OF OBS" => PrnObsTypes,
+                    "IONOSPHERIC CORR" => IonosphericCorrections,
+                    "TIME SYSTEM CORR" => TimeSystemCorrections,
                     "END OF HEADER" => EndOfHeader)
 
 
-mutable struct Antenna
-    number::String
-    type::String
-    version::String
-    xyz::Vector{Real}
-    delta_xyz::Vector{Real}
-    delta_hen::Vector{Real} # height, east/north eccentricity
-    bsight::Vector{Real}
-    zerodir_xyz::Vector{Real}
-    phase_center::DataFrames.DataFrame
-    zerodir_azi::Real
-    center_of_mass::Vector{Real}
-end
-Antenna() = Antenna("", "", "",[[NaN,NaN,NaN] for i in 1:5]...,DataFrame(),NaN,[NaN,NaN,NaN])
 
 
-
-mutable struct Marker
-    name::String
-    number::String
-    type::String
-end
-Marker() = Marker("", "", "")
-
-struct Receiver
-    number::String
-    type::String
-    verion::String
-end
-Receiver() = Receiver("", "", "")
-
-struct SystemObs
-    constellation::Char
-    number_of_observables::Int
-    types::Vector{String}
-end
-SystemObs() = SystemObs('G', 6, ["C1C", "L1C", "D1C", "C2X", "L2X", "D2X"])
-
-struct Corrections 
-    constellation::Char
-    program::String
-    url::String
-end
-Corrections() = Corrections(' ', "", "")

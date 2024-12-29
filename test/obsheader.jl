@@ -1,4 +1,4 @@
-@testset "nav body parsing" begin
+@testset "obs header parsing" begin
     path = "../data/line22_fromhostivartopohorelec.24O"
     content = rinexread(path)
     header,data = rinexread(path)
@@ -26,8 +26,4 @@
       @test header.time_of_first_obs - TimeDate(2024,7,10,7,31,17,2,426,900) < Nanosecond(10)
       @test header.optional["TIME OF LAST OBS"] - TimeDate(2024,7,10,8,14,38,4,0,500) < Nanosecond(10)
       @test header.date - TimeDate(2024,7,10,12,38) < Nanosecond(10)
-
-
-
-
 end

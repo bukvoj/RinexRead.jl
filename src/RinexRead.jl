@@ -6,6 +6,10 @@ module RinexRead
     include("utils.jl")
 
     # Abstract types and structs
+    include("ionosphericcorrections.jl")
+    include("timesystemcorrections.jl")
+    include("antenna_marker_receiver.jl")
+    include("glonasscodphsbis_systemobs_corrections.jl")
     include("headerlabels.jl")
     include("abstractheader.jl")
     include("abstractbody.jl")

@@ -22,7 +22,16 @@ end
 
 
 function readheader(str::String, ::Type{NavigationFile}; version=3.0, constellation='M')
-    return NavHeader(version, 'N', constellation, str) # NOT IMPLEMENTED 
+    header =  NavHeader()
+    header.version = version
+    header.constellations = constellation
+    header.str = str
+    
+    strlines = split(str, '\n')
+    for l in strlines
+        lineparse!(header::NavHeader,HEADER_LABELS[strip(l[61:end])], string(l))
+    end
+    return header
 end
 
 function readheader(str::String, ::Type{ObservationFile}; version=3.0, constellation='M')
@@ -38,10 +47,6 @@ function readheader(str::String, ::Type{ObservationFile}; version=3.0, constella
     return header
 end
 
-function lineparse!(header::ObsHeader,::Type{RinexVersionType}, line::String)
-    nothing
-end
-
 function lineparse!(header::ObsHeader,::Type{PgmRunbyDate}, line::String)
     header.pgm = line[1:20]
     header.runby = line[21:40]
@@ -54,6 +59,10 @@ function lineparse!(header::ObsHeader,::Type{PgmRunbyDate}, line::String)
     if !occursin("UTC", line)
         println("Warning: Date is not in UTC")
     end
+end
+
+function lineparse!(header::ObsHeader,::Type{RinexVersionType}, line::String)
+    nothing
 end
 
 function lineparse!(header::ObsHeader,::Type{Comment}, line::String)
@@ -284,3 +293,55 @@ function lineparse!(header::ObsHeader,::Type{<:HeaderLabels}, line::String)
     println("WARNING: Unknown Header Label encountered")
 end
 
+# START OF NAVIGATION FILE PARSING
+function lineparse!(header::NavHeader,::Type{PgmRunbyDate}, line::String)
+    header.pgm = line[1:20]
+    header.runby = line[21:40]
+    header.date = TimeDate(parse(Int, line[41:44]), 
+                            parse(Int, line[45:46]), 
+                            parse(Int, line[47:48]),
+                            parse(Int, line[50:51]),
+                            parse(Int, line[52:53]),
+                            parse(Int, line[54:55]))
+    if !occursin("UTC", line)
+        println("Warning: Date is not in UTC")
+    end
+end
+
+function lineparse!(header::NavHeader,::Type{Comment}, line::String)
+    nothing # YOU CAN READ THEM IN THE STRING IF YOU WANT....
+end
+
+function lineparse!(header::NavHeader,::Type{IonosphericCorrections}, line::String)
+    println("Warning: Ionospheric Corrections not implemented yet")
+end
+
+function lineparse!(header::NavHeader,::Type{TimeSystemCorrections}, line::String)
+    println("Warning: Time System Corrections not implemented yet")
+end
+
+function lineparse!(header::NavHeader,::Type{LeapSeconds}, line::String)
+    current = parse_withwhitespace(line[1:6], Int)
+    future = parse_withwhitespace(line[7:12], Int)
+    week_number = parse_withwhitespace(line[13:18], Int)
+    day_of_week = parse_withwhitespace(line[19:24], Int)
+    time_system_id = line[25:27]
+    if time_system_id == "BDS"
+        constellation = 'C'
+    else
+        constellation = 'G'
+    end
+    header.leapseconds = LeapSeconds(current, future, week_number, day_of_week, constellation)
+end
+
+function lineparse!(header::NavHeader,::Type{EndOfHeader}, line::String)
+    nothing
+end
+
+function lineparse!(header::NavHeader,::Type{RinexVersionType}, line::String)
+    nothing
+end
+
+function lineparse!(header::NavHeader,::Type{<:HeaderLabels}, line::String)
+    println("WARNING: Unknown Header Label encountered")
+end

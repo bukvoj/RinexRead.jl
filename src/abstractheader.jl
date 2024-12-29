@@ -44,4 +44,20 @@ mutable struct NavHeader <: RinexHeader
     filetype::Char
     constellations::Char
     str::String
+    pgm::String
+    runby::String
+    date::TimeDate
+    ionocorrections::IonosphericCorrections
+    timecorrections::TimeSystemCorrections
+    leapseconds::LeapSeconds
 end
+NavHeader() = NavHeader(3.0, 
+                        'N',
+                        'G',
+                        "",
+                        "",
+                        "",
+                        TimeDate(0),
+                        IonosphericCorrections(),
+                        TimeSystemCorrections(),
+                        LeapSeconds())
