@@ -313,11 +313,41 @@ function lineparse!(header::NavHeader,::Type{Comment}, line::String)
 end
 
 function lineparse!(header::NavHeader,::Type{IonosphericCorrections}, line::String)
-    println("Warning: Ionospheric Corrections not implemented yet")
+    constellation = line[1:4]
+    params = [parse_withwhitespace(replace(line[6+i*12:17+i*12], "D"=>"e", "E"=>"e", "d"=>"e"), Float64) for i in 0:3]
+    if constellation == "GAL "
+        header.ionocorrections.GALILEO = (a0 = params[1], a1 = params[2], a2 = params[3])
+    elseif constellation == "GPSA"
+        seta!(header.ionocorrections.GPS, params...)
+    elseif constellation == "GPSB"
+        setb!(header.ionocorrections.GPS, params...)
+    elseif constellation == "QZSA"
+        seta!(header.ionocorrections.QZSS, params...)
+    elseif constellation == "QZSB"
+        setb!(header.ionocorrections.QZSS, params...)
+    elseif constellation == "BDSA"
+        seta!(header.ionocorrections.BEIDOU, params...)
+    elseif constellation == "BDSB"
+        setb!(header.ionocorrections.BEIDOU, params...)
+    elseif constellation == "IRNA"
+        seta!(header.ionocorrections.IRNSS, params...)
+    elseif constellation == "IRNB"
+        setb!(header.ionocorrections.IRNSS, params...)
+    else
+        println("WARNING: Unknown constellation encountered: ", constellation)
+    end
 end
 
 function lineparse!(header::NavHeader,::Type{TimeSystemCorrections}, line::String)
-    println("Warning: Time System Corrections not implemented yet")
+    constellation = line[1:4]
+    a0 = parse_withwhitespace(replace(line[5:22], "D"=>"e", "E"=>"e", "d"=>"e"), Float64)
+    a1 = parse_withwhitespace(replace(line[23:38], "D"=>"e", "E"=>"e", "d"=>"e"), Float64)
+    reftime = parse_withwhitespace(line[39:45], Int)
+    refweek = parse_withwhitespace(line[46:50], Int)
+    source = line[52:56]
+    utcidentifier = parse_withwhitespace(line[58:59], Int)
+    utcidentifier = isnan(utcidentifier) ? 0 : utcidentifier
+    header.timecorrections[constellation] = TimeSystemCorrection(a0, a1, reftime, refweek, source, utcidentifier)
 end
 
 function lineparse!(header::NavHeader,::Type{LeapSeconds}, line::String)

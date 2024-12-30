@@ -48,7 +48,7 @@ mutable struct NavHeader <: RinexHeader
     runby::String
     date::TimeDate
     ionocorrections::IonosphericCorrections
-    timecorrections::TimeSystemCorrections
+    timecorrections::Dict{String, TimeSystemCorrection}
     leapseconds::LeapSeconds
 end
 NavHeader() = NavHeader(3.0, 
@@ -59,5 +59,5 @@ NavHeader() = NavHeader(3.0,
                         "",
                         TimeDate(0),
                         IonosphericCorrections(),
-                        TimeSystemCorrections(),
+                        Dict{String, TimeSystemCorrection}(),
                         LeapSeconds())

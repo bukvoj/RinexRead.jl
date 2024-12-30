@@ -32,7 +32,7 @@ abstract type GlonassSlots <: HeaderLabels end
 abstract type NumSatellites <: HeaderLabels end
 abstract type PrnObsTypes <: HeaderLabels end
 # abstract type IonosphericCorrections <: HeaderLabels end # THESE ARE IN ionosphericcorrections.jl
-# abstract type TimeSystemCorrections <: HeaderLabels end  # THESE ARE IN timesystemcorrectionscorrections.jl
+abstract type TimeSystemCorrections <: HeaderLabels end  # THESE ARE IN timesystemcorrectionscorrections.jl
 abstract type EndOfHeader <: HeaderLabels end
 
 const HEADER_LABELS = Dict("RINEX VERSION / TYPE" => RinexVersionType,
