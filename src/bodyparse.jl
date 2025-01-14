@@ -1,8 +1,8 @@
 function parsebody!(stream::IOStream, header::NavHeader)
     data = RinexBody()
 
-    buff = read(stream, Char)
     while !eof(stream)
+        buff = read(stream, Char)
         if buff == 'G'
             data.GPS = append!(data.GPS,readgpsnavdata!(stream))
         elseif buff == 'R'
@@ -18,7 +18,7 @@ function parsebody!(stream::IOStream, header::NavHeader)
         elseif buff == 'I'
             data.IRNSS = append!(data.IRNSS,readirnssnavdata!(stream))
         end
-        buff = read(stream, Char)
+        # buff = read(stream, Char)
     end
     close(stream)
     return data
