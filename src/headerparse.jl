@@ -314,7 +314,7 @@ end
 
 function lineparse!(header::NavHeader,::Type{IonosphericCorrections}, line::String)
     constellation = line[1:4]
-    params = [parse_withwhitespace(replace(line[6+i*12:17+i*12], "D"=>"e", "E"=>"e", "d"=>"e"), Float64) for i in 0:3]
+    params = [parse_withwhitespace(replace(line[6+i*12:17+i*12], 'D'=>'e', 'E'=>'e', 'd'=>'e'), Float64) for i in 0:3]
     if constellation == "GAL "
         header.ionocorrections.GALILEO = (a0 = params[1], a1 = params[2], a2 = params[3])
     elseif constellation == "GPSA"
