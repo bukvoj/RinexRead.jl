@@ -1,5 +1,5 @@
 @testset "obs header parsing" begin
-    path = "../data/line22_fromhostivartopohorelec.24O"
+    path = "../data/obstest1.24O"
     content = rinexread(path)
     header,data = rinexread(path)
 
